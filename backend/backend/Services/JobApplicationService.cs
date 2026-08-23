@@ -22,7 +22,7 @@ namespace backend.Services
                 Location = dto.Location,
 
                 CreatedAt = DateTime.UtcNow,
-                Status = dto.Status,
+                ApplicationStatus = dto.ApplicationStatus,
                 ApplicationDate = dto.ApplicationDate,
 
                 Salary = dto.Salary,
@@ -32,7 +32,7 @@ namespace backend.Services
                 Skills = dto.Skills,
 
                 EmploymentType = dto.EmploymentType,
-                WorkSetup = dto.WorkSetup
+                WorkSetupType = dto.WorkSetupType,
             };
 
             _context.JobApplications.Add(jobApplication);
@@ -67,8 +67,8 @@ namespace backend.Services
             if (dto.Location != null)
                 jobApplication.Location = dto.Location;
 
-            if (dto.Status.HasValue)
-                jobApplication.Status = dto.Status.Value;
+            if (dto.ApplicationStatus.HasValue)
+                jobApplication.ApplicationStatus = dto.ApplicationStatus.Value;
 
             if (dto.ApplicationDate.HasValue)
                 jobApplication.ApplicationDate = dto.ApplicationDate;
@@ -85,11 +85,12 @@ namespace backend.Services
             if (dto.Skills != null)
                 jobApplication.Skills = dto.Skills;
 
-            if (dto.EmploymentType != null)
-                jobApplication.EmploymentType = dto.EmploymentType;
+            if (dto.EmploymentType.HasValue)
+                jobApplication.EmploymentType = dto.EmploymentType.Value;
+            
 
-            if (dto.WorkSetup.HasValue)
-                jobApplication.WorkSetup = dto.WorkSetup.Value;
+            if (dto.WorkSetupType.HasValue)
+                jobApplication.WorkSetupType = dto.WorkSetupType.Value;
 
             await _context.SaveChangesAsync();
 

@@ -26,11 +26,14 @@ namespace backend.Data
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<JobApplication>()
-                .Property(x => x.Status)
+                .Property(x => x.ApplicationStatus)
                 .HasConversion<string>();
 
             modelBuilder.Entity<JobApplication>()
-                .Property(x => x.WorkSetup)
+                .Property(x => x.WorkSetupType)
+                .HasConversion<string>();
+            modelBuilder.Entity<JobApplication>()
+                .Property(x => x.EmploymentType)
                 .HasConversion<string>();
         }
     }

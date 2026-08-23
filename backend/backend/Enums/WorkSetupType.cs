@@ -1,6 +1,6 @@
 ﻿namespace backend.Enums
 {
-    public enum WorkSetup
+    public enum WorkSetupType
     {
         Onsite,
         Remote,

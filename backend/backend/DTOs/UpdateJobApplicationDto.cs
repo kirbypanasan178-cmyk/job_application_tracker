@@ -10,7 +10,7 @@ namespace backend.DTOs
 
         public string? Location { get; set; }
 
-        public ApplicationStatus? Status { get; set; }
+        public ApplicationStatus? ApplicationStatus { get; set; }
 
         public DateTime? ApplicationDate { get; set; }
 
@@ -22,8 +22,8 @@ namespace backend.DTOs
 
         public string? Skills { get; set; }
 
-        public string? EmploymentType { get; set; }
+        public EmploymentType? EmploymentType { get; set; }
 
-        public WorkSetup? WorkSetup { get; set; }
+        public WorkSetupType? WorkSetupType { get; set; }
     }
 }

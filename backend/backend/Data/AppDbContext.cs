@@ -15,5 +15,23 @@ namespace backend.Data
 
         // DbSet represents the Table/Collection of JobApplication records that EF Core can query and modify
         public DbSet<JobApplication> JobApplications { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<JobApplication>()
+                .Property(x => x.Salary)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<JobApplication>()
+                .Property(x => x.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<JobApplication>()
+                .Property(x => x.WorkSetup)
+                .HasConversion<string>();
+        }
     }
 }

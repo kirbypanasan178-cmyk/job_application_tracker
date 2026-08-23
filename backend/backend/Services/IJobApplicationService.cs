@@ -1,13 +1,17 @@
-﻿using backend.Models;
+﻿using backend.DTOs;
+using backend.Models;
 
 namespace backend.Services
 {
     public interface IJobApplicationService
     {
-        List<JobApplication> GetAll();
-        JobApplication? GetById(int id);
-        JobApplication Create(JobApplication job);
-        JobApplication? Update(int id, JobApplication job);
-        bool Delete(int id);
+        // List<JobApplication> GetAll();
+        Task<JobApplication> CreateAsync(CreateJobApplicationDto dto);
+
+        Task<JobApplication?> GetByIdAsync(int id);
+
+        Task<JobApplication?> UpdateAsync(int id, UpdateJobApplicationDto dto);
+
+        Task<bool> DeleteAsync(int id);
     }
 }

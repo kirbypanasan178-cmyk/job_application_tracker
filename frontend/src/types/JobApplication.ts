@@ -10,10 +10,30 @@ export interface JobApplicationFormType {
 }
 
 export interface JobApplicationTableDataType {
-  id: number;
+  _id: string;
   companyName: string;
   jobTitle: string;
   location: string;
   status: string;
   applicationDate: string;
+}
+
+export interface JobApplicationResponse {
+  _id: string;
+
+  // Basic information
+  companyName: string;
+  jobTitle: string;
+  location: string;
+
+  // Application information
+  status: string;
+  applicationDate: string;
+
+  // Job details
+  salary: number | null;
+  description: string;
+  requirements: string;
+  skills: string;
+  employmentType: string;
 }

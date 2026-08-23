@@ -1,6 +1,6 @@
 // JobApplicationForm.tsx
 import { useState, type FormEvent, type ChangeEvent } from "react";
- // <- point this at your actual file
+// <- point this at your actual file
 import { Label } from "../../components/ui/Label";
 import { Input } from "../../components/ui/Input";
 import { Textarea } from "../../components/ui/TextArea";
@@ -9,7 +9,8 @@ import { Button } from "../../components/ui/Button";
 import { ErrorLabel } from "../../components/ui/ErrorLabel";
 import { validateJobApplicationForm } from "../../validator/JobApplicationForm";
 import type { JobApplicationFormType } from "../../types/JobApplication";
-
+import { useJob } from "../../hooks/useJob";
+import { useAppSelector } from "../../hooks/reduxHooks";
 
 const EMPTY_FORM: JobApplicationFormType = {
   jobTitle: "",
@@ -45,11 +46,15 @@ export const JobApplicationForm = ({
     ...EMPTY_FORM,
     ...initialValues,
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof JobApplicationFormType, string>>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof JobApplicationFormType, string>>
+  >({});
+
+  const { error, loading } = useAppSelector((state) => state.jobs);
+  const { createJob } = useJob();
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -69,43 +74,41 @@ export const JobApplicationForm = ({
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      await onSubmit(formData);
-      setFormData(EMPTY_FORM);
-      setErrors({});
-    } finally {
-      setIsSubmitting(false);
-    }
+    const result = await createJob(formData);
+    console.log("Result: ", result);
   };
 
   return (
-    
     <form
       onSubmit={handleSubmit}
       noValidate
       className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
     >
       <div className="mb-6 flex items-start justify-between">
-  <div>
-    <h2 className="text-lg font-semibold text-slate-900">Post a job</h2>
-    <p className="mt-1 text-sm text-slate-500">
-      Fill in the details below to create a new job listing.
-    </p>
-  </div>
-  {onCancel && (
-    <button
-      type="button"
-      onClick={onCancel}
-      aria-label="Close"
-      className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-        <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-      </svg>
-    </button>
-  )}
-</div>
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">Post a job</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Fill in the details below to create a new job listing.
+          </p>
+        </div>
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            aria-label="Close"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="h-5 w-5"
+            >
+              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+          </button>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
@@ -239,7 +242,7 @@ export const JobApplicationForm = ({
             Cancel
           </Button>
         )}
-        <Button type="submit" isLoading={isSubmitting}>
+        <Button type="submit" isLoading={loading}>
           Post job
         </Button>
       </div>

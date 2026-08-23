@@ -1,4 +1,6 @@
-﻿namespace backend.Models
+﻿using backend.Enums;
+
+namespace backend.Models
 {
     public class JobApplication
     {
@@ -12,9 +14,11 @@
         public string Location { get; set; } = string.Empty;
 
         // Application information
-        public string Status { get; set; } = "Applied";
 
-        public DateTime ApplicationDate { get; set; }
+        public ApplicationStatus Status { get; set; } = ApplicationStatus.Saved;
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime? ApplicationDate { get; set; }
 
         // Job details
         public decimal? Salary { get; set; }
@@ -26,5 +30,7 @@
         public string Skills { get; set; } = string.Empty;
 
         public string EmploymentType { get; set; } = string.Empty;
+
+        public WorkSetup? WorkSetup { get; set; }
     }
 }

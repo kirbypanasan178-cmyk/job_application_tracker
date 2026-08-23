@@ -1,5 +1,7 @@
 ﻿using backend.Data;
+using backend.DTOs;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
 {
@@ -11,52 +13,93 @@ namespace backend.Services
         {
             _context = context;
         }
-
-        public List<JobApplication> GetAll()
+        public async Task<JobApplication> CreateAsync(CreateJobApplicationDto dto)
         {
-            return _context.JobApplications.ToList();
+            var jobApplication = new JobApplication
+            {
+                CompanyName = dto.CompanyName,
+                JobTitle = dto.JobTitle,
+                Location = dto.Location,
+
+                CreatedAt = DateTime.UtcNow,
+                Status = dto.Status,
+                ApplicationDate = dto.ApplicationDate,
+
+                Salary = dto.Salary,
+
+                Description = dto.Description,
+                Requirements = dto.Requirements,
+                Skills = dto.Skills,
+
+                EmploymentType = dto.EmploymentType,
+                WorkSetup = dto.WorkSetup
+            };
+
+            _context.JobApplications.Add(jobApplication);
+            await _context.SaveChangesAsync();
+
+            return jobApplication;
+        }
+        // GET BY ID
+        public async Task<JobApplication?> GetByIdAsync(int id)
+        {
+            return await _context.JobApplications
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public JobApplication? GetById(int id)
+        public async Task<JobApplication?> UpdateAsync(
+     int id,
+     UpdateJobApplicationDto dto)
         {
-            return _context.JobApplications.Find(id);
-        }
+            var jobApplication = await _context.JobApplications.FindAsync(id);
 
-        public JobApplication Create(JobApplication job)
-        {
-            _context.JobApplications.Add(job);
-            _context.SaveChanges();
-            return job;
-        }
-
-        public JobApplication? Update(int id, JobApplication job)
-        {
-            var existingJob = _context.JobApplications.Find(id);
-
-            if (existingJob == null)
+            if (jobApplication == null)
             {
                 return null;
             }
 
-            existingJob.CompanyName = job.CompanyName;
-            existingJob.JobTitle = job.JobTitle;
-            existingJob.Location = job.Location;
-            existingJob.Status = job.Status;
-            existingJob.ApplicationDate = job.ApplicationDate;
-            existingJob.Salary = job.Salary;
-            existingJob.Description = job.Description;
-            existingJob.Requirements = job.Requirements;
-            existingJob.Skills = job.Skills;
-            existingJob.EmploymentType = job.EmploymentType;
+            if (dto.CompanyName != null)
+                jobApplication.CompanyName = dto.CompanyName;
 
-            _context.SaveChanges();
+            if (dto.JobTitle != null)
+                jobApplication.JobTitle = dto.JobTitle;
 
-            return existingJob;
+            if (dto.Location != null)
+                jobApplication.Location = dto.Location;
+
+            if (dto.Status.HasValue)
+                jobApplication.Status = dto.Status.Value;
+
+            if (dto.ApplicationDate.HasValue)
+                jobApplication.ApplicationDate = dto.ApplicationDate;
+
+            if (dto.Salary.HasValue)
+                jobApplication.Salary = dto.Salary;
+
+            if (dto.Description != null)
+                jobApplication.Description = dto.Description;
+
+            if (dto.Requirements != null)
+                jobApplication.Requirements = dto.Requirements;
+
+            if (dto.Skills != null)
+                jobApplication.Skills = dto.Skills;
+
+            if (dto.EmploymentType != null)
+                jobApplication.EmploymentType = dto.EmploymentType;
+
+            if (dto.WorkSetup.HasValue)
+                jobApplication.WorkSetup = dto.WorkSetup.Value;
+
+            await _context.SaveChangesAsync();
+
+            return jobApplication;
         }
 
-        public bool Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var job = _context.JobApplications.Find(id);
+            var job = await _context.JobApplications
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (job == null)
             {
@@ -64,7 +107,7 @@ namespace backend.Services
             }
 
             _context.JobApplications.Remove(job);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return true;
 

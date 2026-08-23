@@ -1,34 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using backend.Enums;
 
 namespace backend.DTOs
 {
     public class UpdateJobApplicationDto
     {
-        [Required]
-        public string CompanyName { get; set; } = string.Empty;
+        public string? CompanyName { get; set; }
 
-        [Required]
-        public string JobTitle { get; set; } = string.Empty;
+        public string? JobTitle { get; set; }
 
-        [Required]
-        public string Location { get; set; } = string.Empty;
+        public string? Location { get; set; }
 
-        [Required]
-        public string Status { get; set; } = string.Empty;
+        public ApplicationStatus? Status { get; set; }
 
-        [Required]
-        public DateTime ApplicationDate { get; set; }
+        public DateTime? ApplicationDate { get; set; }
 
-        [Range(0, double.MaxValue)]
-        public decimal Salary { get; set; }
+        public decimal? Salary { get; set; }
 
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
-        public string Requirements { get; set; } = string.Empty;
+        public string? Requirements { get; set; }
 
-        public string Skills { get; set; } = string.Empty;
+        public string? Skills { get; set; }
 
-        [Required]
-        public string EmploymentType { get; set; } = string.Empty;
+        public string? EmploymentType { get; set; }
+
+        public WorkSetup? WorkSetup { get; set; }
     }
 }

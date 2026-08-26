@@ -8,7 +8,7 @@ namespace backend.Services
         // List<JobApplication> GetAll();
         Task<JobApplication> CreateAsync(CreateJobApplicationDto dto);
 
-        Task<JobApplication?> GetByIdAsync(int id);
+        Task<List<JobApplication>> GetByUserIdAsync(int uSerId);
 
         Task<JobApplication?> UpdateAsync(int id, UpdateJobApplicationDto dto);
 

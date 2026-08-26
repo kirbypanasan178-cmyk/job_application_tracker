@@ -38,7 +38,7 @@ namespace backend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var jobApplication = await _jobApplicationService.GetByIdAsync(id);
+            var jobApplication = await _jobApplicationService.GetByUserIdAsync(id);
 
             if (jobApplication == null)
             {

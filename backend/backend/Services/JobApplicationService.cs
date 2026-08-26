@@ -16,7 +16,8 @@ namespace backend.Services
         public async Task<JobApplication> CreateAsync(CreateJobApplicationDto dto)
         {
             var jobApplication = new JobApplication
-            {
+            {         
+                UserId = 2,
                 CompanyName = dto.CompanyName,
                 JobTitle = dto.JobTitle,
                 Location = dto.Location,
@@ -41,10 +42,12 @@ namespace backend.Services
             return jobApplication;
         }
         // GET BY ID
-        public async Task<JobApplication?> GetByIdAsync(int id)
+        public async Task<List<JobApplication>> GetByUserIdAsync(int userId)
         {
             return await _context.JobApplications
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.CreatedAt)
+                .ToListAsync();
         }
 
         public async Task<JobApplication?> UpdateAsync(

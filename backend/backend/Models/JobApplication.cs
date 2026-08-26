@@ -7,6 +7,9 @@ namespace backend.Models
         public int Id { get; set; }
 
         // Basic information
+        public int UserId { get; set; }
+
+        public User User { get; set; } = null!;
         public string CompanyName { get; set; } = string.Empty;
         public string JobTitle { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;

@@ -138,7 +138,15 @@ export const ApplicationsTable = ({
                   <StatusBadge status={application.status} />
                 </td>
 
-                <td className="px-6 py-4 text-sm text-gray-500">{application.applicationDate}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">
+                  {application.applicationDate
+                    ? new Date(application.applicationDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })
+                    : "—"}
+                </td>
 
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">

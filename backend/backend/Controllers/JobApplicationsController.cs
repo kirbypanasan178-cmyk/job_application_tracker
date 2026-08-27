@@ -35,10 +35,16 @@ namespace backend.Controllers
             );
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet]
+        public async Task<IActionResult> GetById(
+            [FromQuery] int userId,
+            [FromQuery] JobApplicationQueryDto query
+            )
         {
-            var jobApplication = await _jobApplicationService.GetByUserIdAsync(id);
+            var jobApplication = await _jobApplicationService.GetByUserIdAsync(
+                    userId = 2,
+                    query
+                );
 
             if (jobApplication == null)
             {

@@ -10,6 +10,7 @@ type WorkSetupType =
 | "Remote"
 | "Hybrid"
 
+
 export interface JobApplicationFormType {
   jobTitle: string;
   companyName: string;
@@ -43,6 +44,7 @@ export interface JobApplicationResponse {
   status: string;
   applicationDate: string;
 
+   applicationStatus: string;
   // Job details
   salary: number | null;
   description: string;

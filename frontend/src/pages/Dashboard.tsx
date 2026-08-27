@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { JobApplicationForm } from "../components/forms/JobApplicationForm";
-import { Modal } from "../components/ui/Modal";
-import type { JobApplicationFormType, JobApplicationResponse } from "../types/JobApplication";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import type { JobApplicationResponse } from "../types/JobApplication";
 import { AddApplication } from "../components/dashboard/AddApplication";
 import StatsGrid from "../components/dashboard/StatsGrid";
 import { ApplicationsTable, type JobApplicationRow } from "../components/dashboard/ApplicationTable";
 import { useJob } from "../hooks/useJob";
 import { useAppSelector } from "../hooks/reduxHooks";
 import type { ApplicationStatus } from "../components/dashboard/StatusBadge";
+import { useState } from "react";
 
 
 const STATUS_FILTER_OPTIONS = [
@@ -32,6 +32,7 @@ const toTableRow = (job: JobApplicationResponse): JobApplicationRow => ({
   status: (job.status as ApplicationStatus) ?? "Pending",
   applicationDate: job.applicationDate ?? "",
 });
+
 const computeStats = (jobs: JobApplicationResponse[]) => {
   const todayStr = new Date().toDateString();
 
@@ -55,7 +56,7 @@ const computeStats = (jobs: JobApplicationResponse[]) => {
 };
 
 export const Dashboard = () => {
-  const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate();
   const { jobs } = useAppSelector((state) => state.jobs);
 
   const [statusFilter, setStatusFilter] = useState("All Status");
@@ -63,20 +64,13 @@ export const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { createJob, getJobById } = useJob();
-
-  const handleCreateJob = async (data: JobApplicationFormType) => {
-    const result = await createJob(data);
-    if (result.success) {
-      setShowForm(false);
-    }
-    // TODO: surface result.message on failure (toast/inline error)
-  };
+  const { getJobById } = useJob();
 
   const handleGenerateFromUrl = async (jobUrl: string) => {
     // TODO: call your job-detail-extraction API with jobUrl,
-    // then prefill/open the form with the extracted data.
-    setShowForm(true);
+    // then prefill/open the CreateJob page with the extracted data
+    // (e.g. navigate("/jobs/new", { state: { prefill } }))
+    navigate("/jobs/new");
   };
 
   const tableRows = jobs.map(toTableRow);
@@ -100,16 +94,13 @@ export const Dashboard = () => {
   );
 
   useEffect(() => {
-  const loadJobs = async () => {
-    const result = await getJobById("1");
+    const loadJobs = async () => {
+      const result = await getJobById("2");
+      console.log("Job applications:", result);
+    };
 
-    console.log("Job applications:", result);
-  };
-
-  loadJobs();
-}, []);
-
-
+    loadJobs();
+  }, []);
 
   return (
     <div className="mx-auto max-w-6xl p-6">
@@ -122,16 +113,9 @@ export const Dashboard = () => {
       <div className="mt-6">
         <AddApplication
           onGenerate={handleGenerateFromUrl}
-          onAddManually={() => setShowForm(true)}
+          onAddManually={() => navigate("/create-job-application")}
         />
       </div>
-
-      <Modal isOpen={showForm} onClose={() => setShowForm(false)}>
-        <JobApplicationForm
-          onSubmit={handleCreateJob}
-          onCancel={() => setShowForm(false)}
-        />
-      </Modal>
 
       <div className="mt-6">
         <ApplicationsTable

@@ -1,3 +1,15 @@
+type EmploymentType =
+  | "FullTime"
+  | "PartTime"
+  | "Contract"
+  | "Internship"
+  | "Freelance";
+
+type WorkSetupType = 
+| "Onsite"
+| "Remote"
+| "Hybrid"
+
 export interface JobApplicationFormType {
   jobTitle: string;
   companyName: string;
@@ -6,7 +18,8 @@ export interface JobApplicationFormType {
   description: string;
   requirements: string;
   skills: string;
-  employmentType: string;
+  employmentType: EmploymentType;
+  workSetupType: WorkSetupType;
 }
 
 export interface JobApplicationTableDataType {
@@ -17,13 +30,6 @@ export interface JobApplicationTableDataType {
   status: string;
   applicationDate: string;
 }
-
-type EmploymentType =
-  | "FullTime"
-  | "PartTime"
-  | "Contract"
-  | "Internship"
-  | "Freelance";
 
 export interface JobApplicationResponse {
   _id: string;
@@ -43,4 +49,5 @@ export interface JobApplicationResponse {
   requirements: string;
   skills: string;
   employmentType: EmploymentType;
+  workSetupType: WorkSetupType;
 }

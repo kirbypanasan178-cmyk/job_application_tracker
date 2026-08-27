@@ -1,11 +1,16 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import { Dashboard } from './pages/Dashboard'
+import { CreateJob } from './pages/CreateJob'
 
 function App() {
   return (
-    <div>
-      <Dashboard />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="create-job-application" element={<CreateJob />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

@@ -1,6 +1,4 @@
-// JobApplicationForm.tsx
 import { useState, type FormEvent, type ChangeEvent } from "react";
-// <- point this at your actual file
 import { Label } from "../../components/ui/Label";
 import { Input } from "../../components/ui/Input";
 import { Textarea } from "../../components/ui/TextArea";
@@ -9,8 +7,6 @@ import { Button } from "../../components/ui/Button";
 import { ErrorLabel } from "../../components/ui/ErrorLabel";
 import { validateJobApplicationForm } from "../../validator/JobApplicationForm";
 import type { JobApplicationFormType } from "../../types/JobApplication";
-import { useJob } from "../../hooks/useJob";
-import { useAppSelector } from "../../hooks/reduxHooks";
 
 const EMPTY_FORM: JobApplicationFormType = {
   jobTitle: "",
@@ -20,38 +16,42 @@ const EMPTY_FORM: JobApplicationFormType = {
   description: "",
   requirements: "",
   skills: "",
-  employmentType: "Full-time",
+  employmentType: "FullTime",
+  workSetupType: "Onsite",
 };
 
 const EMPLOYMENT_TYPE_OPTIONS = [
-  { label: "Full-time", value: "Full-time" },
-  { label: "Part-time", value: "Part-time" },
+  { label: "Full-time", value: "FullTime" },
+  { label: "Part-time", value: "PartTime" },
   { label: "Contract", value: "Contract" },
   { label: "Internship", value: "Internship" },
+  { label: "Freelance", value: "Freelance" },
+];
+
+const WORK_SETUP_TYPE_OPTIONS = [
+  { label: "Onsite", value: "Onsite" },
   { label: "Remote", value: "Remote" },
+  { label: "Hybrid", value: "Hybrid" },
 ];
 
 interface JobApplicationFormProps {
   onSubmit: (data: JobApplicationFormType) => void | Promise<void>;
   onCancel?: () => void;
   initialValues?: Partial<JobApplicationFormType>;
+  isLoading?: boolean;
 }
 
 export const JobApplicationForm = ({
   onSubmit,
   onCancel,
   initialValues,
+  isLoading = false,
 }: JobApplicationFormProps) => {
   const [formData, setFormData] = useState<JobApplicationFormType>({
     ...EMPTY_FORM,
     ...initialValues,
   });
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof JobApplicationFormType, string>>
-  >({});
-
-  const { error, loading } = useAppSelector((state) => state.jobs);
-  const { createJob } = useJob();
+  const [errors, setErrors] = useState<Partial<Record<keyof JobApplicationFormType, string>>>({});
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -74,8 +74,7 @@ export const JobApplicationForm = ({
       return;
     }
 
-    const result = await createJob(formData);
-    console.log("Result: ", result);
+    await onSubmit(formData);
   };
 
   return (
@@ -173,7 +172,7 @@ export const JobApplicationForm = ({
           <ErrorLabel message={errors.salary} />
         </div>
 
-        <div className="sm:col-span-2">
+        <div>
           <Label htmlFor="employmentType" required>
             Employment type
           </Label>
@@ -186,6 +185,21 @@ export const JobApplicationForm = ({
             error={errors.employmentType}
           />
           <ErrorLabel message={errors.employmentType} />
+        </div>
+
+        <div>
+          <Label htmlFor="workSetupType" required>
+            Work setup
+          </Label>
+          <Select
+            id="workSetupType"
+            name="workSetupType"
+            value={formData.workSetupType}
+            onChange={handleChange}
+            options={WORK_SETUP_TYPE_OPTIONS}
+            error={errors.workSetupType}
+          />
+          <ErrorLabel message={errors.workSetupType} />
         </div>
 
         <div className="sm:col-span-2">
@@ -242,7 +256,7 @@ export const JobApplicationForm = ({
             Cancel
           </Button>
         )}
-        <Button type="submit" isLoading={loading}>
+        <Button type="submit" isLoading={isLoading}>
           Post job
         </Button>
       </div>

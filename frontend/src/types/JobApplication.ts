@@ -18,6 +18,13 @@ export interface JobApplicationTableDataType {
   applicationDate: string;
 }
 
+type EmploymentType =
+  | "FullTime"
+  | "PartTime"
+  | "Contract"
+  | "Internship"
+  | "Freelance";
+
 export interface JobApplicationResponse {
   _id: string;
 
@@ -35,5 +42,5 @@ export interface JobApplicationResponse {
   description: string;
   requirements: string;
   skills: string;
-  employmentType: string;
+  employmentType: EmploymentType;
 }

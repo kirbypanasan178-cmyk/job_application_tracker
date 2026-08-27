@@ -49,11 +49,7 @@ namespace backend.Controllers
                 });
             }
 
-            return Ok(new
-            {
-                status = true,
-                data = jobApplication,
-            });
+            return Ok(jobApplication);
         }
 
         [HttpPut("{id}")]

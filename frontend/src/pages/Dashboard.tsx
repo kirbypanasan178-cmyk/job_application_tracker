@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { JobApplicationForm } from "../components/forms/JobApplicationForm";
 import { Modal } from "../components/ui/Modal";
-import type { JobApplicationFormType } from "../types/JobApplication";
+import type { JobApplicationFormType, JobApplicationResponse } from "../types/JobApplication";
 import { AddApplication } from "../components/dashboard/AddApplication";
 import StatsGrid from "../components/dashboard/StatsGrid";
 import { ApplicationsTable, type JobApplicationRow } from "../components/dashboard/ApplicationTable";
+import { useJob } from "../hooks/useJob";
+import { useAppSelector } from "../hooks/reduxHooks";
+import type { ApplicationStatus } from "../components/dashboard/StatusBadge";
 
 
 const STATUS_FILTER_OPTIONS = [
@@ -21,31 +24,26 @@ const DATE_FILTER_OPTIONS = ["All Time", "This Week", "This Month"];
 
 const PAGE_SIZE = 6;
 
-// NOTE: maps your job state into table rows. Adjust field names below
-// if JobApplicationFormType uses different property names.
-const toTableRow = (job: JobApplicationFormType, index: number): JobApplicationRow => ({
-  id: (job as any).id ?? String(index),
-  companyName: (job as any).companyName ?? "",
-  jobTitle: (job as any).jobTitle ?? "",
-  location: (job as any).location ?? "",
-  status: (job as any).status ?? "Pending",
-  applicationDate: (job as any).applicationDate ?? (job as any).dateApplied ?? "",
+const toTableRow = (job: JobApplicationResponse): JobApplicationRow => ({
+  id: job._id,
+  companyName: job.companyName ?? "",
+  jobTitle: job.jobTitle ?? "",
+  location: job.location ?? "",
+  status: (job.status as ApplicationStatus) ?? "Pending",
+  applicationDate: job.applicationDate ?? "",
 });
-
-// NOTE: assumes JobApplicationFormType has `status` and `dateApplied` fields.
-// Adjust the field names below to match your actual type if they differ.
-const computeStats = (jobs: JobApplicationFormType[]) => {
+const computeStats = (jobs: JobApplicationResponse[]) => {
   const todayStr = new Date().toDateString();
 
   const countByStatus = (status: string) =>
-    jobs.filter((job) => (job as any).status === status).length;
+    jobs.filter((job) => job.status === status).length;
 
   return {
     totalApplications: jobs.length,
     appliedToday: jobs.filter(
       (job) =>
-        (job as any).dateApplied &&
-        new Date((job as any).dateApplied).toDateString() === todayStr
+        job.applicationDate &&
+        new Date(job.applicationDate).toDateString() === todayStr
     ).length,
     pending: countByStatus("Pending"),
     interview: countByStatus("Interview"),
@@ -58,17 +56,21 @@ const computeStats = (jobs: JobApplicationFormType[]) => {
 
 export const Dashboard = () => {
   const [showForm, setShowForm] = useState(false);
-  const [jobs, setJobs] = useState<JobApplicationFormType[]>([]);
+  const { jobs } = useAppSelector((state) => state.jobs);
 
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [dateFilter, setDateFilter] = useState("All Time");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { createJob, getJobById } = useJob();
+
   const handleCreateJob = async (data: JobApplicationFormType) => {
-    // TODO: replace with your actual API call, e.g. POST /api/jobs
-    setJobs((prev) => [...prev, data]);
-    setShowForm(false);
+    const result = await createJob(data);
+    if (result.success) {
+      setShowForm(false);
+    }
+    // TODO: surface result.message on failure (toast/inline error)
   };
 
   const handleGenerateFromUrl = async (jobUrl: string) => {
@@ -96,6 +98,18 @@ export const Dashboard = () => {
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
+
+  useEffect(() => {
+  const loadJobs = async () => {
+    const result = await getJobById("1");
+
+    console.log("Job applications:", result);
+  };
+
+  loadJobs();
+}, []);
+
+
 
   return (
     <div className="mx-auto max-w-6xl p-6">

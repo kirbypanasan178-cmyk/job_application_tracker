@@ -1,16 +1,23 @@
 import type { JobApplicationResponse } from "../types/JobApplication";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
+import type { PaginatedResponse } from "../types/pagination";
 interface JobApplicationState {
-    jobs: JobApplicationResponse[]
+    jobs: PaginatedResponse<JobApplicationResponse>
     loading: boolean
     error: string | null
 }
 
 const initialState: JobApplicationState = {
-    jobs: [],
-    loading: false,
-    error: null,
-}
+  jobs: {
+    items: [],
+    page: 1,
+    pageSize: 10,
+    totalCount: 0,
+    totalPages: 0,
+  },
+  loading: false,
+  error: null,
+};
 
 const jobSlice = createSlice({
     name: "jobs",
@@ -21,24 +28,24 @@ const jobSlice = createSlice({
         },
         createJobSuccess: (state, action: PayloadAction<JobApplicationResponse>) => {
             state.loading = false
-            state.jobs.push(action.payload)
+            state.jobs.items.push(action.payload)
         },
-        getJobByIdSuccess: (state, action: PayloadAction<JobApplicationResponse[]>) => {
+        getJobsSuccess: (state, action: PayloadAction<PaginatedResponse<JobApplicationResponse>>) => {
             state.loading = false
             state.jobs = action.payload
         },
         updateJobSuccess: (state, action: PayloadAction<JobApplicationResponse>) => {
             state.loading = false
-            const index = state.jobs.findIndex(
+            const index = state.jobs.items.findIndex(
                 job => job._id === action.payload._id
             )
             if (index !== -1) {
-                state.jobs[index] = action.payload
+                state.jobs.items[index] = action.payload
             }
         },
         deleteJobSuccess: (state, action: PayloadAction<string | null>) => {
             state.loading = false
-            state.jobs = state.jobs.filter((job) => job._id !== action.payload)
+            state.jobs.items = state.jobs.items.filter((job) => job._id !== action.payload)
         },
         setJobFailure: (state, action: PayloadAction<string | null>) => {
             state.loading = false
@@ -50,7 +57,7 @@ const jobSlice = createSlice({
 export const {
     setJobStart,
     createJobSuccess,
-    getJobByIdSuccess,
+    getJobsSuccess,
     updateJobSuccess,
     deleteJobSuccess,
     setJobFailure,

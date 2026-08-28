@@ -1,3 +1,13 @@
+export type ApplicationStatus =
+  | "Saved"
+  | "Pending"
+  | "Applied"
+  | "Interview"
+  | "TechnicalInterview"
+  | "JobOffer"
+  | "Rejected"
+  | "Withdrawn";
+
 type EmploymentType =
   | "FullTime"
   | "PartTime"
@@ -44,7 +54,7 @@ export interface JobApplicationResponse {
   status: string;
   applicationDate: string;
 
-   applicationStatus: string;
+   applicationStatus: ApplicationStatus;
   // Job details
   salary: number | null;
   description: string;

@@ -1,7 +1,8 @@
-import { createJobSuccess, deleteJobSuccess, getJobByIdSuccess, setJobFailure, setJobStart, updateJobSuccess } from "../features/jobSlice"
+import { createJobSuccess, deleteJobSuccess, getJobsSuccess, setJobFailure, setJobStart, updateJobSuccess } from "../features/jobSlice"
 import { handleAsync } from "../lib/handleAsync"
-import { createJobRequest, deleteJobRequest, getJobByIdRequest, updateJobRequest } from "../services/jobService"
+import { createJobRequest, deleteJobRequest, getJobsRequest, updateJobRequest } from "../services/jobService"
 import type { JobApplicationFormType } from "../types/JobApplication"
+import type { JobApplicationQuery } from "../types/pagination"
 import { useAppDispatch } from "./reduxHooks"
 
 export const useJob = () => {
@@ -15,10 +16,10 @@ export const useJob = () => {
         return result
     }
 
-    const getJobById = async (id: string) => {
+    const getJobs = async (query: JobApplicationQuery) => {
         dispatch(setJobStart())
-        const result = await handleAsync(() => getJobByIdRequest(id))
-        if (result.success) dispatch(getJobByIdSuccess(result.data))
+        const result = await handleAsync(() => getJobsRequest(query))
+        if (result.success) dispatch(getJobsSuccess(result.data))
         else dispatch(setJobFailure(result.message))
 
         return result
@@ -42,5 +43,5 @@ export const useJob = () => {
         return result
     }
 
-    return { createJob, getJobById, updateJob, deleteJob }
+    return { createJob, getJobs, updateJob, deleteJob }
 }

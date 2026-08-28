@@ -1,7 +1,8 @@
 import { MapPin, Search, MoreVertical } from "lucide-react";
-import { StatusBadge, type ApplicationStatus } from "./StatusBadge";
 import { Pagination } from "./Pagination";
 import { CompanyAvatar } from "./CompanyAvatar";
+import type { ApplicationStatus } from "../../types/JobApplication";
+import { StatusBadge } from "./StatusBadge";
 
 export interface JobApplicationRow {
   id: string;

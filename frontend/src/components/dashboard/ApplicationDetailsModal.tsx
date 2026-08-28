@@ -40,7 +40,7 @@ interface ApplicationDetailsModalProps {
 
 export const ApplicationDetailsModal = ({ isOpen, onClose, jobId }: ApplicationDetailsModalProps) => {
   const jobs = useAppSelector((state) => state.jobs.jobs);
-  const job = jobs.find((j) => j._id === jobId);
+  const job = jobs.items.find((j) => j._id === jobId);
 
   if (!job) return null;
 

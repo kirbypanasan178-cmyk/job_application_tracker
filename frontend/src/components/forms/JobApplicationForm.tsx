@@ -12,7 +12,9 @@ const EMPTY_FORM: JobApplicationFormType = {
   jobTitle: "",
   companyName: "",
   location: "",
-  salary: 0,
+  salaryMin: 0,
+  salaryMax: 0,
+  jobUrl: "",
   description: "",
   requirements: "",
   skills: "",
@@ -53,13 +55,15 @@ export const JobApplicationForm = ({
   });
   const [errors, setErrors] = useState<Partial<Record<keyof JobApplicationFormType, string>>>({});
 
+  const NUMERIC_FIELDS = new Set(["salaryMin", "salaryMax"]);
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "salary" ? Number(value) : value,
+      [name]: NUMERIC_FIELDS.has(name) ? Number(value) : value,
     }));
     if (errors[name as keyof JobApplicationFormType]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
@@ -155,21 +159,40 @@ export const JobApplicationForm = ({
           <ErrorLabel message={errors.location} />
         </div>
 
+        <div />
+
         <div>
-          <Label htmlFor="salary" required>
-            Salary (monthly)
+          <Label htmlFor="salaryMin">
+            Minimum salary (monthly)
           </Label>
           <Input
-            id="salary"
-            name="salary"
+            id="salaryMin"
+            name="salaryMin"
             type="number"
             min={0}
-            value={formData.salary || ""}
+            value={formData.salaryMin || ""}
+            onChange={handleChange}
+            placeholder="e.g. 35000"
+            error={errors.salaryMin}
+          />
+          <ErrorLabel message={errors.salaryMin} />
+        </div>
+
+        <div>
+          <Label htmlFor="salaryMax">
+            Maximum salary (monthly)
+          </Label>
+          <Input
+            id="salaryMax"
+            name="salaryMax"
+            type="number"
+            min={0}
+            value={formData.salaryMax || ""}
             onChange={handleChange}
             placeholder="e.g. 45000"
-            error={errors.salary}
+            error={errors.salaryMax}
           />
-          <ErrorLabel message={errors.salary} />
+          <ErrorLabel message={errors.salaryMax} />
         </div>
 
         <div>
@@ -200,6 +223,21 @@ export const JobApplicationForm = ({
             error={errors.workSetupType}
           />
           <ErrorLabel message={errors.workSetupType} />
+        </div>
+
+        <div className="sm:col-span-2">
+          <Label htmlFor="jobUrl">
+            Job posting URL
+          </Label>
+          <Input
+            id="jobUrl"
+            name="jobUrl"
+            value={formData.jobUrl}
+            onChange={handleChange}
+            placeholder="e.g. https://company.com/careers/frontend-developer"
+            error={errors.jobUrl}
+          />
+          <ErrorLabel message={errors.jobUrl} />
         </div>
 
         <div className="sm:col-span-2">

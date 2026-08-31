@@ -7,6 +7,7 @@ import { ApplicationsTable, type JobApplicationRow } from "../components/dashboa
 import { useJob } from "../hooks/useJob";
 import { useAppSelector } from "../hooks/reduxHooks";
 
+type StatusFilterValue = ApplicationStatus | "All Status";
 
 const STATUS_FILTER_OPTIONS = [
   "All Status",
@@ -18,6 +19,16 @@ const STATUS_FILTER_OPTIONS = [
   "Rejected",
   "Withdrawn",
 ];
+
+const STATUS_LABEL_TO_VALUE: Record<string, ApplicationStatus | undefined> = {
+  "Saved": "Saved",
+  "Pending": "Pending",
+  "Interview": "Interview",
+  "Technical Interview": "TechnicalInterview",
+  "Job Offer": "JobOffer",
+  "Rejected": "Rejected",
+  "Withdrawn": "Withdrawn",
+};
 
 const DATE_FILTER_OPTIONS = ["All Time", "This Week", "This Month"];
 
@@ -59,9 +70,10 @@ export const Dashboard = () => {
   const { jobs } = useAppSelector((state) => state.jobs);
   const { getJobs } = useJob();
 
-  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("All Status");
   const [dateFilter, setDateFilter] = useState("All Time");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debounceSearch, setDebounceSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   // Server already returns just this page's items — no client-side slicing
@@ -73,17 +85,27 @@ export const Dashboard = () => {
     navigate("/jobs/new");
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearch(searchQuery)
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery])
+
   // Refetch whenever the page changes
   useEffect(() => {
     const fetch = async () => {
       const jobs = await getJobs({
       page: currentPage,
       pageSize: PAGE_SIZE,
+      status: STATUS_LABEL_TO_VALUE[statusFilter],
+      search: debounceSearch,
     });
     console.log("Jobs: ", jobs)
     }
     fetch();
-  }, [currentPage]);
+  }, [currentPage, statusFilter, debounceSearch]);
 
   return (
     <div className="mx-auto max-w-6xl p-6">
@@ -105,7 +127,7 @@ export const Dashboard = () => {
           applications={paginatedRows}
           statusFilter={statusFilter}
           onStatusFilterChange={(value) => {
-            setStatusFilter(value);
+            setStatusFilter(value as StatusFilterValue);
             setCurrentPage(1);
           }}
           statusOptions={STATUS_FILTER_OPTIONS}

@@ -22,7 +22,11 @@ namespace backend.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<JobApplication>()
-                .Property(x => x.Salary)
+                .Property(x => x.SalaryMin)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<JobApplication>()
+                .Property(x => x.SalaryMax)
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<JobApplication>()

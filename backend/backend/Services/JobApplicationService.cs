@@ -24,7 +24,9 @@ namespace backend.Services
                 CreatedAt = DateTime.UtcNow,
                 ApplicationStatus = dto.ApplicationStatus,
                 ApplicationDate = dto.ApplicationDate ?? DateTime.UtcNow,
-                Salary = dto.Salary,
+                SalaryMin = dto.SalaryMin,
+                SalaryMax = dto.SalaryMax,
+                JobUrl = dto.JobUrl,
                 Description = dto.Description,
                 Requirements = dto.Requirements,
                 Skills = dto.Skills,
@@ -140,8 +142,14 @@ namespace backend.Services
             if (dto.ApplicationDate.HasValue)
                 jobApplication.ApplicationDate = dto.ApplicationDate;
 
-            if (dto.Salary.HasValue)
-                jobApplication.Salary = dto.Salary;
+            if (dto.SalaryMin.HasValue)
+                jobApplication.SalaryMin = dto.SalaryMin;
+
+            if (dto.SalaryMax.HasValue)
+                jobApplication.SalaryMax = dto.SalaryMax;
+
+            if (dto.JobUrl != null)
+                jobApplication.JobUrl = dto.JobUrl;
 
             if (dto.Description != null)
                 jobApplication.Description = dto.Description;

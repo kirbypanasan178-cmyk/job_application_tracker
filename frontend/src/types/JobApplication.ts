@@ -23,14 +23,16 @@ type WorkSetupType =
 
 export interface JobApplicationFormType {
   jobTitle: string;
+  jobUrl?: string;
   companyName: string;
   location: string;
-  salary: number;
-  description: string;
-  requirements: string;
-  skills: string;
-  employmentType: EmploymentType;
-  workSetupType: WorkSetupType;
+  salaryMin?: number;
+  salaryMax?: number;
+  description?: string;
+  requirements?: string;
+  skills?: string;
+  employmentType?: EmploymentType;
+  workSetupType?: WorkSetupType;
 }
 
 export interface JobApplicationTableDataType {
@@ -44,7 +46,7 @@ export interface JobApplicationTableDataType {
 
 export interface JobApplicationResponse {
   _id: string;
-
+  jobUrl: string;
   // Basic information
   companyName: string;
   jobTitle: string;
@@ -54,9 +56,11 @@ export interface JobApplicationResponse {
   status: string;
   applicationDate: string;
 
-   applicationStatus: ApplicationStatus;
+  applicationStatus: ApplicationStatus;
   // Job details
-  salary: number | null;
+  salaryMin: number;
+  salaryMax: number;
+
   description: string;
   requirements: string;
   skills: string;

@@ -14,12 +14,19 @@ namespace backend.DTOs
         [Required]
         public string Location { get; set; } = string.Empty;
 
-        public ApplicationStatus ApplicationStatus { get; set; } = ApplicationStatus.Saved;
+        public ApplicationStatus ApplicationStatus { get; set; }
+            = ApplicationStatus.Saved;
 
         public DateTime? ApplicationDate { get; set; }
 
         [Range(0, double.MaxValue)]
-        public decimal? Salary { get; set; }
+        public decimal? SalaryMin { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal? SalaryMax { get; set; }
+
+        [Url]
+        public string JobUrl { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
 

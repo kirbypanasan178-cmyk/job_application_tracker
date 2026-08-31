@@ -14,7 +14,11 @@ namespace backend.DTOs
 
         public DateTime? ApplicationDate { get; set; }
 
-        public decimal? Salary { get; set; }
+        public decimal? SalaryMin { get; set; }
+
+        public decimal? SalaryMax { get; set; }
+
+        public string? JobUrl { get; set; }
 
         public string? Description { get; set; }
 

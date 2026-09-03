@@ -12,6 +12,10 @@ frontend/dist/
 **/bin/
 **/obj/
 
+# ASP.NET Core development settings
+appsettings.Development.json
+appsettings.json
+
 # User-specific files
 *.user
 *.suo

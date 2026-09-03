@@ -1,4 +1,5 @@
-﻿using backend.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using backend.Enums;
 
 namespace backend.Models
 {
@@ -10,9 +11,14 @@ namespace backend.Models
         public int UserId { get; set; }
         public User User { get; set; } = null!;
 
-        // Basic information
+        // Required basic information
+        [Required]
         public string CompanyName { get; set; } = string.Empty;
+
+        [Required]
         public string JobTitle { get; set; } = string.Empty;
+
+        [Required]
         public string Location { get; set; } = string.Empty;
 
         // Application information
@@ -22,7 +28,7 @@ namespace backend.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? ApplicationDate { get; set; }
 
-        // Job details
+        // Optional job details
         public decimal? SalaryMin { get; set; }
         public decimal? SalaryMax { get; set; }
 
@@ -33,7 +39,7 @@ namespace backend.Models
         public EmploymentType? EmploymentType { get; set; }
         public WorkSetupType? WorkSetupType { get; set; }
 
-        // Source
+        // Optional source
         public string? JobUrl { get; set; }
     }
 }

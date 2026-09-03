@@ -1,99 +1,90 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using backend.Enums;
 using backend.Models;
-using backend.Data;
-using backend.DTOs;
 using backend.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class JobApplicationsController : ControllerBase
+    [Route("api/[controller]")]
+    public class JobController : ControllerBase
     {
-        private readonly IJobApplicationService _jobApplicationService;
+        private readonly IScraperService _scraperService;
+        private readonly IGeminiService _geminiService;
+        private readonly ILogger<JobController> _logger;
 
-        // Dependency injection for the job application service
-        public JobApplicationsController(IJobApplicationService jobApplicationService)
+        public JobController(IScraperService scraperService, IGeminiService geminiService, ILogger<JobController> logger)
         {
-            _jobApplicationService = jobApplicationService;
+            _scraperService = scraperService;
+            _geminiService = geminiService;
+            _logger = logger;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(CreateJobApplicationDto dto)
+        [HttpPost("extract")]
+        public async Task<IActionResult> Extract([FromBody] JobUrlRequest request)
         {
-            var jobApplication = await _jobApplicationService.CreateAsync(dto);
+            if (string.IsNullOrWhiteSpace(request.Url) || !Uri.TryCreate(request.Url, UriKind.Absolute, out _))
+                return BadRequest(new { error = "A valid absolute 'url' is required." });
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = jobApplication.Id },
-                new
-                {
-                    status = true,
-                    data = jobApplication,
-                }
-            );
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetById(
-            [FromQuery] int userId,
-            [FromQuery] JobApplicationQueryDto query
-            )
-        {
-            var jobApplication = await _jobApplicationService.GetByUserIdAsync(
-                    userId = 2,
-                    query
-                );
-
-            if (jobApplication == null)
+            try
             {
-                return NotFound(new
+                var cleanedText = await _scraperService.GetCleanVisibleTextAsync(request.Url);
+
+                if (string.IsNullOrWhiteSpace(cleanedText))
+                    return UnprocessableEntity(new { error = "Could not extract any visible text from that page." });
+
+                var extracted = await _geminiService.ExtractJobDataAsync(cleanedText, request.Url);
+
+                // NOTE: not saved to DB here — UserId/User aren't set since there's no
+                // authenticated user in this test flow yet. This just returns the mapped
+                // entity so you can inspect it in Postman before deciding how to persist it.
+                var jobApplication = new JobApplication
                 {
-                    status = false,
-                    message = "Job application not found."
-                });
+                    CompanyName = extracted.CompanyName ?? string.Empty,
+                    JobTitle = extracted.JobTitle ?? string.Empty,
+                    Location = extracted.Location ?? string.Empty,
+                    Description = extracted.Description ?? string.Empty,
+                    Requirements = extracted.Requirements ?? string.Empty,
+                    Skills = extracted.Skills ?? string.Empty,
+                    SalaryMin = extracted.SalaryMin,
+                    SalaryMax = extracted.SalaryMax,
+                    EmploymentType = TryParseEnum<EmploymentType>(extracted.EmploymentType),
+                    WorkSetupType = TryParseEnum<WorkSetupType>(extracted.WorkSetupType),
+                    JobUrl = request.Url,
+                    CreatedAt = DateTime.UtcNow,
+                    ApplicationStatus = ApplicationStatus.Saved
+                };
+
+                return Ok(jobApplication);
             }
-
-            return Ok(jobApplication);
+            catch (TimeoutException ex)
+            {
+                _logger.LogError(ex, "Timed out loading {Url}", request.Url);
+                return StatusCode(504, new { error = "Timed out loading the job page." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to process {Url}", request.Url);
+                return StatusCode(500, new { error = ex.Message, type = ex.GetType().Name });
+            }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, UpdateJobApplicationDto dto)
+        [HttpGet("scrape-preview")]
+        public async Task<IActionResult> ScrapePreview([FromQuery] string url)
         {
-            var jobApplication = await _jobApplicationService.UpdateAsync(id, dto);
+            if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
+                return BadRequest(new { error = "A valid absolute 'url' query param is required." });
 
-            if (jobApplication == null)
-            {
-                return NotFound(new
-                {
-                    status = false,
-                    message = "Job application not found."
-                });
-            }
-
-            return Ok(new
-            {
-                status = true,
-                data = jobApplication,
-            });
+            var cleanedText = await _scraperService.GetCleanVisibleTextAsync(url);
+            return Ok(new { length = cleanedText.Length, text = cleanedText });
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        private static TEnum? TryParseEnum<TEnum>(string? value) where TEnum : struct, Enum
         {
-            var deleted = await _jobApplicationService.DeleteAsync(id);
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
 
-            if (!deleted)
-            {
-                return NotFound(new
-                {
-                    status = false,
-                    message = "Job application not found."
-                });
-            }
-
-            return NoContent();
+            return Enum.TryParse<TEnum>(value, ignoreCase: true, out var result) ? result : null;
         }
     }
 }

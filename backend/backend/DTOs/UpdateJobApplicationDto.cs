@@ -9,7 +9,7 @@ namespace backend.DTOs
         public string? JobTitle { get; set; }
 
         public string? Location { get; set; }
-
+        public int UserId { get; set; }
         public ApplicationStatus? ApplicationStatus { get; set; }
 
         public DateTime? ApplicationDate { get; set; }

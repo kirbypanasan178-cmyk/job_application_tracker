@@ -5,7 +5,7 @@ import type { ApplicationStatus } from "../../types/JobApplication";
 import { StatusBadge } from "./StatusBadge";
 
 export interface JobApplicationRow {
-  id: string;
+  id: number;
   companyName: string;
   jobTitle: string;
   location: string;
@@ -15,7 +15,6 @@ export interface JobApplicationRow {
 
 interface ApplicationsTableProps {
   applications: JobApplicationRow[];
-
   statusFilter: string;
   onStatusFilterChange: (value: string) => void;
   statusOptions: string[];
@@ -32,8 +31,8 @@ interface ApplicationsTableProps {
   totalResults: number;
   pageSize: number;
   onPageChange: (page: number) => void;
-
-  onViewDetails: (application: JobApplicationRow) => void;
+  
+  onViewDetails: (_id: number) => void;
   onActionMenuClick: (application: JobApplicationRow) => void;
 }
 
@@ -153,7 +152,7 @@ export const ApplicationsTable = ({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => onViewDetails(application)}
+                      onClick={() => onViewDetails(application.id)}
                       className="rounded-lg border border-gray-200 px-3.5 py-1.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50"
                     >
                       View Details

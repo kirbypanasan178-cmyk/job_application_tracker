@@ -6,6 +6,7 @@ import StatsGrid from "../components/dashboard/StatsGrid";
 import { ApplicationsTable, type JobApplicationRow } from "../components/dashboard/ApplicationTable";
 import { useJob } from "../hooks/useJob";
 import { useAppSelector } from "../hooks/reduxHooks";
+import { ApplicationDetailsModal } from "../components/dashboard/ApplicationDetailsModal";
 
 type StatusFilterValue = ApplicationStatus | "All Status";
 
@@ -33,7 +34,7 @@ const STATUS_LABEL_TO_VALUE: Record<string, ApplicationStatus | undefined> = {
 const DATE_FILTER_OPTIONS = ["All Time", "This Week", "This Month"];
 
 const toTableRow = (job: JobApplicationResponse): JobApplicationRow => ({
-  id: job._id,
+  id: job.id,
   companyName: job.companyName ?? "",
   jobTitle: job.jobTitle ?? "",
   location: job.location ?? "",
@@ -75,6 +76,24 @@ export const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debounceSearch, setDebounceSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedApplication, setSelectedApplication] = useState<JobApplicationResponse | null>(null);
+  const [isModalOpen, setIsModelOpen] = useState(false)
+
+  const handleViewApplication = (jobId: number) => {
+    const application = jobs.items.find(job => job.id === jobId);
+    if (!application) {
+      console.error("Application not found")
+      return; 
+    }
+    console.log("Job applications", application)
+    setSelectedApplication(application);
+    setIsModelOpen(true);
+  }
+
+  const handleCloseViewApplication = () => {
+    setIsModelOpen(false);
+    setSelectedApplication(null);
+  }
 
   // Server already returns just this page's items — no client-side slicing
   const paginatedRows = jobs.items.map(toTableRow);
@@ -102,7 +121,7 @@ export const Dashboard = () => {
       status: STATUS_LABEL_TO_VALUE[statusFilter],
       search: debounceSearch,
     });
-    console.log("Jobs: ", jobs)
+      console.log("Jobs: ", jobs)
     }
     fetch();
   }, [currentPage, statusFilter, debounceSearch]);
@@ -125,6 +144,7 @@ export const Dashboard = () => {
       <div className="mt-6">
         <ApplicationsTable
           applications={paginatedRows}
+          onViewDetails={handleViewApplication}
           statusFilter={statusFilter}
           onStatusFilterChange={(value) => {
             setStatusFilter(value as StatusFilterValue);
@@ -146,13 +166,18 @@ export const Dashboard = () => {
           totalPages={jobs.totalPages}
           totalResults={jobs.totalCount}
           pageSize={PAGE_SIZE}
-          onPageChange={setCurrentPage}
-          onViewDetails={(application) => {
-            console.log("view details", application);
-          }}
+          onPageChange={setCurrentPage}          
           onActionMenuClick={(application) => {
             console.log("action menu", application);
           }}
+        />
+      </div>
+
+      <div>
+        <ApplicationDetailsModal 
+          job={selectedApplication}
+          isOpen={isModalOpen}
+          onClose={handleCloseViewApplication}
         />
       </div>
     </div>

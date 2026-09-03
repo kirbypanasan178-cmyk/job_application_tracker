@@ -1,4 +1,5 @@
 using backend.Data;
+using backend.Options;
 using backend.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -33,6 +34,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IScraperService, PlaywrightScraperService>();
+builder.Services.AddHttpClient<IGeminiService, GeminiService>();
+
 
 builder.Services.AddOpenApi();
 
@@ -45,11 +49,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowReact");
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

@@ -13,7 +13,7 @@ namespace backend.DTOs
 
         [Required]
         public string Location { get; set; } = string.Empty;
-
+        public int UserId { get; set; }
         public ApplicationStatus ApplicationStatus { get; set; }
             = ApplicationStatus.Saved;
 

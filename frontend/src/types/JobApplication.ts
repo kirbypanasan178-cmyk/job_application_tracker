@@ -36,7 +36,7 @@ export interface JobApplicationFormType {
 }
 
 export interface JobApplicationTableDataType {
-  _id: string;
+  id: number;
   companyName: string;
   jobTitle: string;
   location: string;
@@ -45,7 +45,7 @@ export interface JobApplicationTableDataType {
 }
 
 export interface JobApplicationResponse {
-  _id: string;
+  id: number;
   jobUrl: string;
   // Basic information
   companyName: string;

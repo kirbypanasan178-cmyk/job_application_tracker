@@ -1,4 +1,2 @@
-﻿USE JobTrackerDb;
-
-SELECT *
+﻿SELECT *
 FROM JobApplications;

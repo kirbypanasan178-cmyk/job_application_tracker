@@ -28,7 +28,7 @@ const jobSlice = createSlice({
         },
         createJobSuccess: (state, action: PayloadAction<JobApplicationResponse>) => {
             state.loading = false
-            state.jobs.items.push(action.payload)
+            state.jobs.items.unshift(action.payload)
         },
         getJobsSuccess: (state, action: PayloadAction<PaginatedResponse<JobApplicationResponse>>) => {
             state.loading = false

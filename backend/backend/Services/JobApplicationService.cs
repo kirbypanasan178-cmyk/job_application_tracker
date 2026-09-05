@@ -1,5 +1,6 @@
 ﻿using backend.Data;
 using backend.DTOs;
+using backend.Enums;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,40 @@ namespace backend.Services
             _context.JobApplications.Add(jobApplication);
             await _context.SaveChangesAsync();
             return jobApplication;
+        }
+
+        public async Task<JobApplication> CreateFromExtractedAsync(ExtractedJobDto extracted, string sourceUrl)
+        {
+            var jobApplication = new JobApplication
+            {
+                UserId = 2,
+                CompanyName = extracted.CompanyName ?? string.Empty,
+                JobTitle = extracted.JobTitle ?? string.Empty,
+                Location = extracted.Location ?? string.Empty,
+                Description = extracted.Description ?? string.Empty,
+                Requirements = extracted.Requirements ?? string.Empty,
+                Skills = extracted.Skills ?? string.Empty,
+                SalaryMin = extracted.SalaryMin,
+                SalaryMax = extracted.SalaryMax,
+                EmploymentType = TryParseEnum<EmploymentType>(extracted.EmploymentType),
+                WorkSetupType = TryParseEnum<WorkSetupType>(extracted.WorkSetupType),
+                JobUrl = sourceUrl,
+                CreatedAt = DateTime.UtcNow,
+                ApplicationDate = DateTime.UtcNow,
+                ApplicationStatus = ApplicationStatus.Saved
+            };
+
+            _context.JobApplications.Add(jobApplication);
+            await _context.SaveChangesAsync();
+
+            return jobApplication;
+        }
+
+        private static TEnum? TryParseEnum<TEnum>(string? value) where TEnum : struct, Enum
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+            return Enum.TryParse<TEnum>(value, ignoreCase: true, out var result) ? result : null;
         }
         // GET BY ID
         public async Task<PagedResultDto<JobApplication>> GetByUserIdAsync(int userId, JobApplicationQueryDto query)

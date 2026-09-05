@@ -2,7 +2,7 @@ import type { JobApplicationFormType, JobApplicationResponse } from "../types/Jo
 import type { JobApplicationQuery, PaginatedResponse } from "../types/pagination";
 import { apiFetch } from "../utils/apiFetch";
 
-export const getJobsRequest = (query: JobApplicationQuery) => {
+export const getJobsRequest = (id: number, query: JobApplicationQuery) => {
   const params = new URLSearchParams();
   if (query.search) {
     params.append("Search", query.search)
@@ -16,10 +16,10 @@ export const getJobsRequest = (query: JobApplicationQuery) => {
   params.append("SortBy", query.sortBy ?? "CreatedAt");
   params.append("Descending", String(query.descending ?? true));
 
-  return apiFetch<PaginatedResponse<JobApplicationResponse>>(`/JobApplications?${params.toString()}`);
+  return apiFetch<PaginatedResponse<JobApplicationResponse>>(`/JobApplication/user/${id}?${params.toString()}`);
 };
 
-export const getJobByIdRequest = (id: string) => {
+export const getJobByIdRequest = (id: number) => {
   return apiFetch<JobApplicationResponse[]>(`/JobApplications/${id}`);
 };
 
@@ -40,8 +40,15 @@ export const updateJobRequest = (
   });
 };
 
-export const deleteJobRequest = (id: string) => {
+export const deleteJobRequest = (id: number) => {
   return apiFetch<JobApplicationResponse>(`/JobApplications/${id}`, {
     method: "DELETE",
   });
 };
+
+export const generateJobRequest = (jobUrl: string) => {
+  return apiFetch<JobApplicationResponse>("/JobApplication/extract", {
+    method: "POST",
+    body: JSON.stringify({ url: jobUrl})
+  });
+}

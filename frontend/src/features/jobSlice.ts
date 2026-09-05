@@ -37,15 +37,15 @@ const jobSlice = createSlice({
         updateJobSuccess: (state, action: PayloadAction<JobApplicationResponse>) => {
             state.loading = false
             const index = state.jobs.items.findIndex(
-                job => job._id === action.payload._id
+                job => job.id === action.payload.id
             )
             if (index !== -1) {
                 state.jobs.items[index] = action.payload
             }
         },
-        deleteJobSuccess: (state, action: PayloadAction<string | null>) => {
+        deleteJobSuccess: (state, action: PayloadAction<number>) => {
             state.loading = false
-            state.jobs.items = state.jobs.items.filter((job) => job._id !== action.payload)
+            state.jobs.items = state.jobs.items.filter((job) => job.id !== action.payload)
         },
         setJobFailure: (state, action: PayloadAction<string | null>) => {
             state.loading = false

@@ -69,7 +69,7 @@ const PAGE_SIZE = 10;
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { jobs } = useAppSelector((state) => state.jobs);
-  const { getJobs } = useJob();
+  const { getJobs, generateJob } = useJob();
 
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("All Status");
   const [dateFilter, setDateFilter] = useState("All Time");
@@ -99,9 +99,8 @@ export const Dashboard = () => {
   const paginatedRows = jobs.items.map(toTableRow);
 
   const handleGenerateFromUrl = async (jobUrl: string) => {
-    // TODO: call your job-detail-extraction API with jobUrl,
-    // then prefill/open the CreateJob page with the extracted data
-    navigate("/jobs/new");
+    const result = await generateJob(jobUrl)
+    console.log("Result: ", result)
   };
 
   useEffect(() => {
@@ -115,7 +114,9 @@ export const Dashboard = () => {
   // Refetch whenever the page changes
   useEffect(() => {
     const fetch = async () => {
-      const jobs = await getJobs({
+      const jobs = await getJobs(
+      2,  
+      {
       page: currentPage,
       pageSize: PAGE_SIZE,
       status: STATUS_LABEL_TO_VALUE[statusFilter],

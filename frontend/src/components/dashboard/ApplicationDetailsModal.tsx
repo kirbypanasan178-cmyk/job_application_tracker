@@ -81,7 +81,7 @@ export const ApplicationDetailsModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="max-h-[85vh] overflow-y-auto rounded-2xl bg-white shadow-2xl ring-1 ring-slate-900/5">
         {/* Header */}
-        <div className="relative bg-gradient-to-br from-indigo-50 via-indigo-50/40 to-white px-6 pb-5 pt-6">
+        <div className="relative from-indigo-50 via-indigo-50/40 to-white px-6 pb-5 pt-6">
           <button
             type="button"
             onClick={onClose}

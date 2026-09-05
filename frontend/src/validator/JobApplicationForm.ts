@@ -17,25 +17,7 @@ export const validateJobApplicationForm = (
     errors.location = "Location is required";
   }
 
-  if (form.salary < 0) {
-    errors.salary = "Salary cannot be negative";
-  }
-
-  if (!form.description.trim()) {
-    errors.description = "Description is required";
-  }
-
-  if (!form.requirements.trim()) {
-    errors.requirements = "Requirements are required";
-  }
-
-  if (!form.skills.trim()) {
-    errors.skills = "Skills are required";
-  }
-
-  if (!form.employmentType.trim()) {
-    errors.employmentType = "Employment type is required";
-  }
+ 
 
   return errors;
 };

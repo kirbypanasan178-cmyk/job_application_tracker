@@ -25,7 +25,7 @@ export const useJob = () => {
         return result
     }
 
-    const updateJob = async (id: string, form: JobApplicationFormType) => {
+    const updateJob = async (id: number, form: JobApplicationFormType) => {
         dispatch(setJobStart())
         const result = await handleAsync(() => updateJobRequest(id, form))
         if (result.success) dispatch(updateJobSuccess(result.data))

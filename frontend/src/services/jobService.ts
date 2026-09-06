@@ -31,7 +31,7 @@ export const createJobRequest = (data: JobApplicationFormType) => {
 };
 
 export const updateJobRequest = (
-  id: string,
+  id: number,
   data: JobApplicationFormType
 ) => {
   return apiFetch<JobApplicationResponse>(`/JobApplications/${id}`, {

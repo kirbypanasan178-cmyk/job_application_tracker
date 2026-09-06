@@ -1,4 +1,5 @@
-import { MapPin, Search, MoreVertical } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { MapPin, Search, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { Pagination } from "./Pagination";
 import { CompanyAvatar } from "./CompanyAvatar";
 import type { ApplicationStatus } from "../../types/JobApplication";
@@ -31,9 +32,10 @@ interface ApplicationsTableProps {
   totalResults: number;
   pageSize: number;
   onPageChange: (page: number) => void;
-  
+
   onViewDetails: (_id: number) => void;
-  onActionMenuClick: (application: JobApplicationRow) => void;
+  onEditApplication: (application: JobApplicationRow) => void;
+  onDeleteApplication: (application: JobApplicationRow) => void;
 }
 
 const TABLE_COLUMNS = [
@@ -61,10 +63,24 @@ export const ApplicationsTable = ({
   pageSize,
   onPageChange,
   onViewDetails,
-  onActionMenuClick,
+  onEditApplication,
+  onDeleteApplication,
 }: ApplicationsTableProps) => {
   const rangeStart = (currentPage - 1) * pageSize + 1;
   const rangeEnd = Math.min(currentPage * pageSize, totalResults);
+
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white">
@@ -149,7 +165,7 @@ export const ApplicationsTable = ({
                 </td>
 
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
+                  <div className="relative flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => onViewDetails(application.id)}
@@ -159,12 +175,44 @@ export const ApplicationsTable = ({
                     </button>
                     <button
                       type="button"
-                      onClick={() => onActionMenuClick(application)}
+                      onClick={() =>
+                        setOpenMenuId(openMenuId === application.id ? null : application.id)
+                      }
                       className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100"
                       aria-label="More actions"
                     >
                       <MoreVertical className="h-4 w-4" />
                     </button>
+
+                    {openMenuId === application.id && (
+                      <div
+                        ref={menuRef}
+                        className="absolute right-0 top-9 z-10 w-36 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpenMenuId(null);
+                            onEditApplication(application);
+                          }}
+                          className="flex w-full items-center gap-2 px-3.5 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpenMenuId(null);
+                            onDeleteApplication(application);
+                          }}
+                          className="flex w-full items-center gap-2 px-3.5 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </td>
               </tr>

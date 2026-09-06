@@ -69,7 +69,7 @@ const PAGE_SIZE = 10;
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { jobs } = useAppSelector((state) => state.jobs);
-  const { getJobs, generateJob } = useJob();
+  const { getJobs, generateJob, deleteJob } = useJob(); // <-- assumes useJob exposes deleteJob; adjust name if different
 
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("All Status");
   const [dateFilter, setDateFilter] = useState("All Time");
@@ -101,6 +101,37 @@ export const Dashboard = () => {
   const handleGenerateFromUrl = async (jobUrl: string) => {
     const result = await generateJob(jobUrl)
     console.log("Result: ", result)
+  };
+
+  const handleEditApplication = (application: JobApplicationRow) => {
+    navigate(`/edit-job-application/${application.id}`);
+  };
+
+  const handleDeleteApplication = async (application: JobApplicationRow) => {
+    const confirmed = window.confirm(
+      `Delete application for "${application.jobTitle}" at ${application.companyName}? This cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteJob(application.id);
+      // Refetch current page so pagination/totalCount stay in sync with the server.
+      // If deleting the last item on a page beyond page 1 empties it, drop back a page.
+      const isLastItemOnPage = jobs.items.length === 1 && currentPage > 1;
+      const targetPage = isLastItemOnPage ? currentPage - 1 : currentPage;
+      if (targetPage !== currentPage) {
+        setCurrentPage(targetPage); // triggers refetch via the effect below
+      } else {
+        await getJobs(2, {
+          page: targetPage,
+          pageSize: PAGE_SIZE,
+          status: STATUS_LABEL_TO_VALUE[statusFilter],
+          search: debounceSearch,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to delete application", err);
+    }
   };
 
   useEffect(() => {
@@ -167,10 +198,9 @@ export const Dashboard = () => {
           totalPages={jobs.totalPages}
           totalResults={jobs.totalCount}
           pageSize={PAGE_SIZE}
-          onPageChange={setCurrentPage}          
-          onActionMenuClick={(application) => {
-            console.log("action menu", application);
-          }}
+          onPageChange={setCurrentPage}
+          onEditApplication={handleEditApplication}
+          onDeleteApplication={handleDeleteApplication}
         />
       </div>
 

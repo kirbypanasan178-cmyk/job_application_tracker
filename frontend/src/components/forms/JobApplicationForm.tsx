@@ -6,7 +6,7 @@ import { Select } from "../../components/ui/Select";
 import { Button } from "../../components/ui/Button";
 import { ErrorLabel } from "../../components/ui/ErrorLabel";
 import { validateJobApplicationForm } from "../../validator/JobApplicationForm";
-import type { JobApplicationFormType } from "../../types/JobApplication";
+import type { ApplicationStatus, JobApplicationFormType } from "../../types/JobApplication";
 
 const EMPTY_FORM: JobApplicationFormType = {
   jobTitle: "",
@@ -20,7 +20,19 @@ const EMPTY_FORM: JobApplicationFormType = {
   skills: "",
   employmentType: "FullTime",
   workSetupType: "Onsite",
+  applicationStatus: "Saved",
 };
+
+const APPLICATION_STATUS_OPTIONS: { label: string; value: ApplicationStatus }[] = [
+  { label: "Saved", value: "Saved" },
+  { label: "Pending", value: "Pending" },
+  { label: "Applied", value: "Applied" },
+  { label: "Interview", value: "Interview" },
+  { label: "Technical Interview", value: "TechnicalInterview" },
+  { label: "Job Offer", value: "JobOffer" },
+  { label: "Rejected", value: "Rejected" },
+  { label: "Withdrawn", value: "Withdrawn" },
+];
 
 const EMPLOYMENT_TYPE_OPTIONS = [
   { label: "Full-time", value: "FullTime" },
@@ -223,6 +235,21 @@ export const JobApplicationForm = ({
             error={errors.workSetupType}
           />
           <ErrorLabel message={errors.workSetupType} />
+        </div>
+
+        <div>
+          <Label htmlFor="applicationStatus" required>
+            Application status
+          </Label>
+          <Select
+            id="applicationStatus"
+            name="applicationStatus"
+            value={formData.applicationStatus}
+            onChange={handleChange}
+            options={APPLICATION_STATUS_OPTIONS}
+            error={errors.applicationStatus}
+          />
+          <ErrorLabel message={errors.applicationStatus} />
         </div>
 
         <div className="sm:col-span-2">

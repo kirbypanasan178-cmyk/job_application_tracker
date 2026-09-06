@@ -31,6 +31,7 @@ export interface JobApplicationFormType {
   description?: string;
   requirements?: string;
   skills?: string;
+  applicationStatus?: ApplicationStatus;
   employmentType?: EmploymentType;
   workSetupType?: WorkSetupType;
 }

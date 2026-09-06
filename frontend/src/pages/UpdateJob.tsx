@@ -8,11 +8,15 @@ import type { JobApplicationFormType } from "../types/JobApplication";
 export const UpdateJob = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { getJob, updateJob } = useJob();
+  const { getJob, updateJob, resetJob } = useJob();
   const { loading, error, job } = useAppSelector((state) => state.jobs);
 
   useEffect(() => {
     if (id) getJob(Number(id));
+
+    return (() => {
+        resetJob();
+    })
   }, [id]);
 
   const handleSubmit = async (data: JobApplicationFormType) => {

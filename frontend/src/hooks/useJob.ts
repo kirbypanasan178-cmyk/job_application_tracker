@@ -1,4 +1,4 @@
-import { createJobSuccess, deleteJobSuccess, getJobsSuccess, getJobSuccess, setJobFailure, setJobStart, updateJobSuccess } from "../features/jobSlice"
+import { clearJob, createJobSuccess, deleteJobSuccess, getJobsSuccess, getJobSuccess, setJobFailure, setJobStart, updateJobSuccess } from "../features/jobSlice"
 import { handleAsync } from "../lib/handleAsync"
 import { createJobRequest, deleteJobRequest, generateJobRequest, getJobRequest, getJobsRequest, updateJobRequest } from "../services/jobService"
 import type { JobApplicationFormType } from "../types/JobApplication"
@@ -59,5 +59,9 @@ export const useJob = () => {
         else dispatch(setJobFailure(result.message))
     }
 
-    return { createJob, getJobs, getJob, updateJob, deleteJob, generateJob }
+    const resetJob = () => {
+        dispatch(clearJob())
+    }
+
+    return { createJob, getJobs, getJob, updateJob, deleteJob, generateJob, resetJob }
 }

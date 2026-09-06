@@ -56,6 +56,9 @@ const jobSlice = createSlice({
         setJobFailure: (state, action: PayloadAction<string | null>) => {
             state.loading = false
             state.error = action.payload
+        },
+        clearJob: (state) => {
+            state.job = null;
         }
     }
 })
@@ -68,6 +71,7 @@ export const {
     updateJobSuccess,
     deleteJobSuccess,
     setJobFailure,
+    clearJob,
 } = jobSlice.actions
 
 export default jobSlice.reducer

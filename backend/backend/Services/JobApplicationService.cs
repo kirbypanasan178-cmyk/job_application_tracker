@@ -151,6 +151,11 @@ namespace backend.Services
          
         }
 
+        public async Task<JobApplication?> GetJobById(int jobId)
+        {
+            return await _context.JobApplications
+                .FirstOrDefaultAsync(j => j.Id == jobId);
+        }
         public async Task<JobApplication?> UpdateAsync(
      int id,
      UpdateJobApplicationDto dto)

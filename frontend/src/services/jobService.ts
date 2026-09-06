@@ -19,12 +19,16 @@ export const getJobsRequest = (id: number, query: JobApplicationQuery) => {
   return apiFetch<PaginatedResponse<JobApplicationResponse>>(`/JobApplication/user/${id}?${params.toString()}`);
 };
 
+export const getJobRequest = (id: number) => {
+  return apiFetch<JobApplicationResponse>(`/JobApplication/${id}`)
+}
+
 export const getJobByIdRequest = (id: number) => {
-  return apiFetch<JobApplicationResponse[]>(`/JobApplications/${id}`);
+  return apiFetch<JobApplicationResponse[]>(`/JobApplication/${id}`);
 };
 
 export const createJobRequest = (data: JobApplicationFormType) => {
-  return apiFetch<JobApplicationResponse>("/JobApplications", {
+  return apiFetch<JobApplicationResponse>("/JobApplication", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -34,14 +38,14 @@ export const updateJobRequest = (
   id: number,
   data: JobApplicationFormType
 ) => {
-  return apiFetch<JobApplicationResponse>(`/JobApplications/${id}`, {
+  return apiFetch<JobApplicationResponse>(`/JobApplication/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),
   });
 };
 
 export const deleteJobRequest = (id: number) => {
-  return apiFetch<JobApplicationResponse>(`/JobApplications/${id}`, {
+  return apiFetch<JobApplicationResponse>(`/JobApplication/${id}`, {
     method: "DELETE",
   });
 };

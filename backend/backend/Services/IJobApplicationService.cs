@@ -9,6 +9,7 @@ namespace backend.Services
         Task<JobApplication> CreateAsync(CreateJobApplicationDto dto);
         Task<JobApplication> CreateFromExtractedAsync(ExtractedJobDto extracted, string sourceUrl);
         Task<PagedResultDto<JobApplication>> GetByUserIdAsync(int userId, JobApplicationQueryDto query);
+        Task<JobApplication?> GetJobById(int jobId);
 
         Task<JobApplication?> UpdateAsync(int id, UpdateJobApplicationDto dto);
 

@@ -2,13 +2,15 @@ import type { JobApplicationResponse } from "../types/JobApplication";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { PaginatedResponse } from "../types/pagination";
 interface JobApplicationState {
+    job: JobApplicationResponse | null
     jobs: PaginatedResponse<JobApplicationResponse>
     loading: boolean
     error: string | null
 }
 
 const initialState: JobApplicationState = {
-  jobs: {
+    job: null,
+    jobs: {
     items: [],
     page: 1,
     pageSize: 10,
@@ -34,6 +36,10 @@ const jobSlice = createSlice({
             state.loading = false
             state.jobs = action.payload
         },
+        getJobSuccess: (state, action: PayloadAction<JobApplicationResponse>) => {
+            state.loading = false
+            state.job = action.payload
+        },
         updateJobSuccess: (state, action: PayloadAction<JobApplicationResponse>) => {
             state.loading = false
             const index = state.jobs.items.findIndex(
@@ -58,6 +64,7 @@ export const {
     setJobStart,
     createJobSuccess,
     getJobsSuccess,
+    getJobSuccess,
     updateJobSuccess,
     deleteJobSuccess,
     setJobFailure,

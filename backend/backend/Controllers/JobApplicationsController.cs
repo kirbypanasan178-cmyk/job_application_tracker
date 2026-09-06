@@ -83,6 +83,13 @@ namespace backend.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{jobId:int}")]
+        public async Task<IActionResult> GetJobById(int jobId)
+        {
+            var result = await _jobApplicationService.GetJobById(jobId);
+            return Ok(result);
+        }
+
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateJobApplicationDto dto)
         {
@@ -101,13 +108,6 @@ namespace backend.Controllers
                 return NotFound(new { error = $"JobApplication with id {id} was not found." });
 
             return NoContent();
-        }
-
-        private static TEnum? TryParseEnum<TEnum>(string? value) where TEnum : struct, Enum
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            return Enum.TryParse<TEnum>(value, ignoreCase: true, out var result) ? result : null;
         }
     }
 }

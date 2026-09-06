@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="create-job-application" element={<CreateJob />} />
-        <Route path="edit-job-application" element={<UpdateJob />} />
+        <Route path="edit-job-application/:id" element={<UpdateJob />} />
       </Routes>
     </BrowserRouter>
   )
